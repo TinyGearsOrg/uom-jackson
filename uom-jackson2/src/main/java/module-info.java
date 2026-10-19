@@ -13,7 +13,7 @@
 @SuppressWarnings("module")
 module org.tinygears.uom.jackson2 {
     requires transitive com.fasterxml.jackson.databind;
-    requires static org.tinygears.uom;
+    requires static transitive org.tinygears.uom;
     requires static org.tinygears.uom.jsr;
 
     exports org.tinygears.uom.jackson2;

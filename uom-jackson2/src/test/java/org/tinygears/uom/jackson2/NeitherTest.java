@@ -13,11 +13,9 @@ package org.tinygears.uom.jackson2;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-/** Neither uom nor uom-jsr is on the class path (the surefire execution neither). */
-@Tag("neither")
+/** Neither uom nor uom-jsr is on the class path. */
 class NeitherTest {
     @Test
     void theClassPathHasNeitherApi() {

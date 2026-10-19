@@ -15,11 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-/** Only uom is on the class path (the surefire execution native-only), as for a user who declares uom alone. */
-@Tag("native-only")
+/** Only uom is on the class path, as for a user who declares uom alone. */
 class NativeOnlyTest {
     @Test
     void theClassPathHasUomButNotUomJsr() throws ClassNotFoundException {

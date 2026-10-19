@@ -1,0 +1,37 @@
+{
+  "roundTrips": [
+    {"name": "text", "type": "Length", "read": "\"5 km\"", "decimals": false, "value": "5.0", "unit": "km", "scale": "ABSOLUTE", "write": "\"5.0 km\""},
+    {"name": "object", "type": "Length", "read": "{\"value\":5,\"unit\":\"km\"}", "decimals": false, "value": "5.0", "unit": "km", "scale": "ABSOLUTE", "write": "\"5.0 km\""},
+    {"name": "object with a string value", "type": "Length", "read": "{\"value\":\"2.5\",\"unit\":\"m\"}", "decimals": false, "value": "2.5", "unit": "m", "scale": "ABSOLUTE", "write": "\"2.5 m\""},
+    {"name": "text with an exponent", "type": "Length", "read": "\"1.5e3 m\"", "decimals": false, "value": "1500.0", "unit": "m", "scale": "ABSOLUTE", "write": "\"1500.0 m\""},
+    {"name": "decimal text keeps every digit", "type": "Length", "read": "\"1.50 km\"", "decimals": true, "value": "1.50", "unit": "km", "scale": "ABSOLUTE", "write": "\"1.50 km\""},
+    {"name": "decimal object keeps every digit", "type": "Length", "read": "{\"value\":1.50,\"unit\":\"km\"}", "decimals": true, "value": "1.50", "unit": "km", "scale": "ABSOLUTE", "write": "\"1.50 km\""},
+    {"name": "decimal text with an exponent", "type": "Length", "read": "\"1E+3 m\"", "decimals": true, "value": "1E+3", "unit": "m", "scale": "ABSOLUTE", "write": "\"1E+3 m\""},
+    {"name": "decimal object with an exponent", "type": "Length", "read": "{\"value\":1E+3,\"unit\":\"m\"}", "decimals": true, "value": "1E+3", "unit": "m", "scale": "ABSOLUTE", "write": "\"1E+3 m\""},
+    {"name": "temperature point", "type": "Temperature", "read": "\"20 °C\"", "decimals": false, "value": "20.0", "unit": "°C", "scale": "ABSOLUTE", "write": "\"20.0 °C\""},
+    {"name": "temperature point as an object", "type": "Temperature", "read": "{\"value\":20,\"unit\":\"°C\",\"scale\":\"ABSOLUTE\"}", "decimals": false, "value": "20.0", "unit": "°C", "scale": "ABSOLUTE", "write": "\"20.0 °C\""},
+    {"name": "temperature difference is an object", "type": "Temperature", "read": "{\"value\":5,\"unit\":\"°C\",\"scale\":\"RELATIVE\"}", "decimals": false, "value": "5.0", "unit": "°C", "scale": "RELATIVE", "write": "{\"value\":5.0,\"unit\":\"°C\",\"scale\":\"RELATIVE\"}"},
+    {"name": "decimal temperature difference", "type": "Temperature", "read": "{\"value\":2.50,\"unit\":\"K\",\"scale\":\"RELATIVE\"}", "decimals": true, "value": "2.50", "unit": "K", "scale": "RELATIVE", "write": "{\"value\":2.50,\"unit\":\"K\",\"scale\":\"RELATIVE\"}"},
+    {"name": "a speed", "type": "Speed", "read": "\"90 km/h\"", "decimals": false, "value": "90.0", "unit": "km/h", "scale": "ABSOLUTE", "write": "\"90.0 km/h\""},
+    {"name": "a product without a type", "type": "Untyped", "read": "\"6 kg·m/s\"", "decimals": false, "value": "6.0", "unit": "kg·m/s", "scale": "ABSOLUTE", "write": "\"6.0 kg·m/s\""},
+    {"name": "any dimension as Untyped", "type": "Untyped", "read": "{\"value\":3,\"unit\":\"m\"}", "decimals": false, "value": "3.0", "unit": "m", "scale": "ABSOLUTE", "write": "\"3.0 m\""},
+    {"name": "a dimensionless number", "type": "Dimensionless", "read": "\"5.0\"", "decimals": false, "value": "5.0", "unit": "1", "scale": "ABSOLUTE", "write": "\"5.0\""}
+  ],
+  "errors": [
+    {"name": "text of another dimension", "type": "Length", "read": "\"5 s\"", "message": "cannot read \"5 s\" as Length: Time [T] is not Length [L]"},
+    {"name": "text of another dimension, a mass", "type": "Length", "read": "\"5 kg\"", "message": "cannot read \"5 kg\" as Length: Mass [M] is not Length [L]"},
+    {"name": "object of another dimension", "type": "Length", "read": "{\"value\":5,\"unit\":\"s\"}", "message": "cannot read an object as Length: Time [T] is not Length [L]"},
+    {"name": "a dimension with two types", "type": "Speed", "read": "\"5 Hz\"", "message": "cannot read \"5 Hz\" as Speed: Frequency/Radioactivity [T^-1] is not Speed [L·T^-1]"},
+    {"name": "no unit", "type": "Length", "read": "{\"value\":5}", "message": "cannot read an object as Length: it has no \"unit\""},
+    {"name": "no value", "type": "Length", "read": "{\"unit\":\"km\"}", "message": "cannot read an object as Length: it has no \"value\""},
+    {"name": "a bad scale", "type": "Length", "read": "{\"value\":5,\"unit\":\"km\",\"scale\":\"SIDEWAYS\"}", "message": "cannot read an object as Length: scale must be \"ABSOLUTE\" or \"RELATIVE\", not \"SIDEWAYS\""},
+    {"name": "a scale that is not a string", "type": "Length", "read": "{\"value\":5,\"unit\":\"km\",\"scale\":1}", "message": "cannot read an object as Length: scale must be a string"},
+    {"name": "a value that is not a number", "type": "Length", "read": "{\"value\":\"abc\",\"unit\":\"km\"}", "message": "cannot read an object as Length: value \"abc\" is not a number"},
+    {"name": "a value of another kind", "type": "Length", "read": "{\"value\":true,\"unit\":\"km\"}", "message": "cannot read an object as Length: value must be a number or a string"},
+    {"name": "a unit that is not a string", "type": "Length", "read": "{\"value\":5,\"unit\":5}", "message": "cannot read an object as Length: unit must be a string"},
+    {"name": "a value twice", "type": "Length", "read": "{\"value\":5,\"value\":6,\"unit\":\"km\"}", "message": "cannot read an object as Length: \"value\" appears twice"},
+    {"name": "an unknown unit in text", "type": "Length", "read": "\"5 foo\"", "messagePrefix": "cannot read \"5 foo\" as Length: "},
+    {"name": "an unknown unit in an object", "type": "Length", "read": "{\"value\":5,\"unit\":\"foo\"}", "messagePrefix": "cannot read an object as Length: "},
+    {"name": "text without a number", "type": "Length", "read": "\"km\"", "messagePrefix": "cannot read \"km\" as Length: "}
+  ]
+}
