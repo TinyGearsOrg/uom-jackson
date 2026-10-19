@@ -38,8 +38,10 @@ user, ask before overriding it.
   the check, the native classes are installed only by `NativeSupport` and the JSR classes only by `JsrSupport`.
 - **The tests are chosen by file name**, one surefire execution per class path (the parent `pom.xml`): `Native*Test`
   runs with and without uom-jsr, so it must not mention a type of uom-jsr; `NativeOnly*Test` runs without uom-jsr;
-  `Neither*Test` runs without uom; every other test (`Jsr*Test`, `PresenceTest`, `VersionTest`) runs on the full class
-  path. A test class that mentions an excluded type cannot be loaded there, so its name must fit its execution.
+  `Neither*Test` runs without uom; every other test (`Jsr*Test`, `PresenceTest`, `VersionTest`, `ModulePathTest`) runs on
+  the full class path. A test class that mentions an excluded type cannot be loaded there, so its name must fit its
+  execution. `ModulePathTest` builds its own module paths from the jars of the class path, compiles a consumer module
+  and runs it on `--module-path`, with the exploded `target/classes` as the module under test.
 
 ## Pinned outputs to keep in step
 

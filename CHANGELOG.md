@@ -24,6 +24,9 @@ the project follows [semantic versioning](https://semver.org/) from 1.0.0. Nothi
 - uom and uom-jsr are optional dependencies: the module serves the API that is on the class path, and says what is
   missing when neither is.
 - The version of the module is the version of the build.
+- Tests on the module path: a consumer module is compiled and run on `--module-path` for three module graphs (uom and
+  uom-jsr, uom only, neither), which checks `provides`, the readability of uom through `requires static transitive`, the
+  version resource and that no package is opened.
 - CI on JDK 17 and 25 against the baselines, a weekly build against the latest Jackson and uom, and Dependabot.
 
 [Unreleased]: https://github.com/TinyGearsOrg/uom-jackson/commits/main

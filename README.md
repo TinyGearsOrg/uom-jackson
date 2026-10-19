@@ -50,6 +50,11 @@ what is on the class path:
 Jackson itself is an ordinary dependency, and your own Jackson version (from your BOM or your framework) wins over the
 one the module is built against.
 
+On the module path the modules `requires static transitive org.tinygears.uom`. Compiling a module against them needs
+`uom` (or `uom-jsr`, which brings it) on the module path, and the types of uom, such as the `UnitFormat` of the builder,
+are readable without an own `requires`. Nothing requires `uom` at run time, so add it to the module graph (your module
+requires it, or `--add-modules org.tinygears.uom`); the module is found by its `provides`, and needs no `opens`.
+
 ## Versions
 
 The modules are built against a baseline and are meant to work with later versions of the same major:
