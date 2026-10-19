@@ -13,8 +13,9 @@ quantities and units as JSON, for Jackson 2 and Jackson 3, on the native and the
 Jackson modules for [uom](https://github.com/TinyGearsOrg/uom): quantities and units as JSON, with exact decimals, typed
 fields and units that Jackson checks while it reads.
 
-**Status:** under construction, nothing is released. Both modules read and write quantities and units on the native
-API, and quantities on the JSR-385 API of uom-jsr (not yet its units), in the format of [docs/JSON.md](docs/JSON.md).
+## Usage
+
+The format is [docs/JSON.md](docs/JSON.md).
 
 ```java
 // Jackson 2 (uom-jackson2)
