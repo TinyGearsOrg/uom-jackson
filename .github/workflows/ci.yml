@@ -1,0 +1,77 @@
+# SPDX-License-Identifier: Apache-2.0
+# Build and checks only: nothing is deployed, signed or tagged.
+name: CI
+
+# pushes to main; other branches run through their pull request, once; a weekly run tests the latest releases
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "17 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  # a superseded pull-request run is cancelled; every commit on main gets a complete run
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    name: build (JDK ${{ matrix.java }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [17, 25]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+          cache: maven
+      - run: mvn -B verify
+
+  # The modules are built against baselines (pom.xml) and meant to work with later versions: this job tests the latest
+  # releases, and a Jackson or uom release that breaks a module shows up here without a commit.
+  latest:
+    name: latest Jackson and uom
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: 25
+          cache: maven
+      - name: Find the latest releases
+        run: |
+          latest() {
+            curl -fsSL "https://repo.maven.apache.org/maven2/$1/maven-metadata.xml" \
+              | grep -oE '<version>[0-9]+\.[0-9]+\.[0-9]+</version>' | sed -E 's/<[^>]+>//g' | sort -V | tail -1
+          }
+          jackson2=$(latest com/fasterxml/jackson/core/jackson-databind)
+          jackson3=$(latest tools/jackson/core/jackson-databind)
+          uom=$(latest org/tinygears/uom)
+          for v in "$jackson2" "$jackson3" "$uom"; do
+            [[ $v =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "no version found: '$v'"; exit 1; }
+          done
+          echo "Jackson 2 $jackson2, Jackson 3 $jackson3, uom $uom"
+          {
+            echo "JACKSON2=$jackson2"
+            echo "JACKSON3=$jackson3"
+            echo "UOM=$uom"
+          } >> "$GITHUB_ENV"
+      - name: Build against them
+        run: mvn -B verify -Djackson2.version="$JACKSON2" -Djackson3.version="$JACKSON3" -Duom.version="$UOM"

@@ -1,0 +1,30 @@
+# SPDX-License-Identifier: Apache-2.0
+version: 2
+updates:
+  - package-ecosystem: maven
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
+    groups:
+      maven:
+        patterns: ["*"]
+    # The baselines are the oldest versions the modules support, so a new release must not raise them; the weekly
+    # "latest" job of the CI workflow tests the new releases instead.
+    ignore:
+      - dependency-name: "com.fasterxml.jackson:jackson-bom"
+      - dependency-name: "tools.jackson:jackson-bom"
+      - dependency-name: "org.tinygears:uom"
+      - dependency-name: "org.tinygears:uom-jsr"
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns: ["*"]

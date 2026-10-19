@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.tinygears</groupId>
+  <artifactId>uom-jackson-parent</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>uom-jackson</name>
+  <description>Jackson modules for uom quantities and units</description>
+
+  <licenses>
+    <license>
+      <name>Apache-2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+    </license>
+  </licenses>
+
+  <modules>
+    <module>uom-jackson2</module>
+    <module>uom-jackson3</module>
+  </modules>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.release>17</maven.compiler.release>
+    <!-- baselines: what the modules compile against, and the oldest version they support -->
+    <uom.version>0.1.0</uom.version>
+    <jackson2.version>2.18.12</jackson2.version>
+    <jackson3.version>3.0.4</jackson3.version>
+    <junit.version>6.1.3</junit.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.tinygears</groupId>
+        <artifactId>uom</artifactId>
+        <version>${uom.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.tinygears</groupId>
+        <artifactId>uom-jsr</artifactId>
+        <version>${uom.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${junit.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.16.0</version>
+        <configuration>
+          <compilerArgs>
+            <arg>-Xlint:all</arg>
+            <arg>-Werror</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+      <!--
+        uom and uom-jsr are optional, so the tests run on three class paths: both, uom only (a user who declares
+        uom), and neither. Tests of the last two carry a tag and must not touch the excluded types.
+      -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.6.0</version>
+        <configuration>
+          <!-- classpathDependencyExcludes needs the class path -->
+          <useModulePath>false</useModulePath>
+        </configuration>
+        <executions>
+          <execution>
+            <id>default-test</id>
+            <configuration>
+              <excludedGroups>native-only,neither</excludedGroups>
+            </configuration>
+          </execution>
+          <execution>
+            <id>native-only</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <groups>native-only</groups>
+              <classpathDependencyExcludes>
+                <classpathDependencyExclude>org.tinygears:uom-jsr</classpathDependencyExclude>
+                <classpathDependencyExclude>javax.measure:unit-api</classpathDependencyExclude>
+              </classpathDependencyExcludes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>neither</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <groups>neither</groups>
+              <classpathDependencyExcludes>
+                <classpathDependencyExclude>org.tinygears:uom-jsr</classpathDependencyExclude>
+                <classpathDependencyExclude>javax.measure:unit-api</classpathDependencyExclude>
+                <classpathDependencyExclude>org.tinygears:uom</classpathDependencyExclude>
+                <classpathDependencyExclude>org.tinygears:uom-engine</classpathDependencyExclude>
+              </classpathDependencyExcludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
