@@ -73,6 +73,12 @@ mvn -B verify
 
 The tests run on three class paths, to prove that the dependencies are optional: uom and uom-jsr, uom only, and neither.
 
+## Documentation
+
+- [docs/JSON.md](docs/JSON.md): the JSON format and the settings.
+- [CHANGELOG.md](CHANGELOG.md): changes per release.
+- [AGENTS.md](AGENTS.md): the rules for AI coding agents (`CLAUDE.md` links to it).
+
 ## License
 
 Apache License 2.0, see [LICENSE](LICENSE).
