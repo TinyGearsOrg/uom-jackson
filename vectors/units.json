@@ -1,0 +1,18 @@
+{
+  "roundTrips": [
+    {"name": "a unit of any type", "type": null, "read": "\"km\"", "symbol": "km", "write": "\"km\""},
+    {"name": "a unit of its type", "type": "Length", "read": "\"km\"", "symbol": "km", "write": "\"km\""},
+    {"name": "a product without a symbol", "type": null, "read": "\"kg·m/s\"", "symbol": "kg·m/s", "write": "\"kg·m/s\""},
+    {"name": "an offset unit", "type": "Temperature", "read": "\"°C\"", "symbol": "°C", "write": "\"°C\""},
+    {"name": "a named derived unit", "type": "Force", "read": "\"N\"", "symbol": "N", "write": "\"N\""},
+    {"name": "a quotient", "type": "Acceleration", "read": "\"m/s^2\"", "symbol": "m/s^2", "write": "\"m/s^2\""},
+    {"name": "the unit one", "type": "Dimensionless", "read": "\"1\"", "symbol": "1", "write": "\"1\""}
+  ],
+  "errors": [
+    {"name": "a unit of another dimension", "type": "Length", "read": "\"s\"", "message": "cannot read \"s\" as Unit<Length>: Time [T] is not Length [L]"},
+    {"name": "a dimension with two types", "type": "Speed", "read": "\"Hz\"", "message": "cannot read \"Hz\" as Unit<Speed>: Frequency/Radioactivity [T^-1] is not Speed [L·T^-1]"},
+    {"name": "an unknown unit", "type": null, "read": "\"foo\"", "messagePrefix": "cannot read \"foo\" as a unit: "},
+    {"name": "an unknown unit of a type", "type": "Length", "read": "\"foo\"", "messagePrefix": "cannot read \"foo\" as Unit<Length>: "},
+    {"name": "no text", "type": "Length", "read": "\"\"", "messagePrefix": "cannot read \"\" as Unit<Length>: "}
+  ]
+}

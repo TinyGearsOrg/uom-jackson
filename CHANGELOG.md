@@ -18,7 +18,9 @@ the project follows [semantic versioning](https://semver.org/) from 1.0.0. Nothi
   `cannot read "5 s" as Length: Time [T] is not Length [L]`, and the path of the field.
 - Units as their symbol: `Unit<?>` and `Unit<Length>` fields of the native API.
 - Quantities of uom-jsr, in the fields `javax.measure.quantity.Length`, `org.tinygears.uom.jsr.quantity.Length` and
-  `javax.measure.Quantity<Length>`, in the same JSON as the native ones. The units of uom-jsr are not handled yet.
+  `javax.measure.Quantity<Length>`, in the same JSON as the native ones.
+- The units of uom-jsr: `javax.measure.Unit<?>` and `javax.measure.Unit<Length>` fields read and write the same symbols as
+  the native units, and a unit of another implementation is refused.
 - Settings of the module: `writeAs` (text or object), `valuesAsStrings`, `decimals` (exact `BigDecimal` quantities that
   keep every digit) and `unitFormat` (units of user `.units` systems).
 - uom and uom-jsr are optional dependencies: the module serves the API that is on the class path, and says what is

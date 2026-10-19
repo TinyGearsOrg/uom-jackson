@@ -56,9 +56,14 @@ same JSON. Only quantities of uom-jsr are written: a quantity of another JSR-385
 
 ## Units
 
-A native unit is its symbol as a string (`"kg·m/s"`), in the format of uom's `UnitFormat`. A field of type
-`Unit<Length>` rejects a unit of another dimension. User `.units` systems work when the module is given a `UnitFormat`
-that has them. The units of uom-jsr (`javax.measure.Unit` fields) are not handled yet.
+A unit is its symbol as a string (`"kg·m/s"`), in the format of uom's `UnitFormat`. A field of type `Unit<Length>` rejects
+a unit of another dimension: `cannot read "s" as Unit<Length>: Time [T] is not Length [L]`. User `.units` systems work
+when the module is given a `UnitFormat` that has them.
+
+The units of uom-jsr work the same. A field of type `javax.measure.Unit<?>`, or `javax.measure.Unit<Length>` with the
+standard quantity type, reads like the native `Unit` and gets a unit of uom-jsr, and a unit of uom-jsr is written as the
+symbol of the native unit of the same value, so both APIs give the same JSON. A unit of another JSR-385 implementation is
+an error.
 
 ## Errors and limits
 

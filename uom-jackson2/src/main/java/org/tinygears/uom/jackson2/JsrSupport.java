@@ -22,9 +22,10 @@ import com.fasterxml.jackson.databind.ser.Serializers;
 import org.tinygears.uom.jsr.quantity.UomQuantity;
 
 /**
- * Registers the serializer and the deserializers of the quantities of uom-jsr; loaded only when uom-jsr is on the
- * class path. A field of type {@code javax.measure.quantity.Length}, {@code org.tinygears.uom.jsr.quantity.Length} or
- * {@code javax.measure.Quantity<Length>} reads like the native {@code Length}, and gets a quantity of uom-jsr.
+ * Registers the serializers and the deserializers of the quantities and the units of uom-jsr; loaded only when uom-jsr
+ * is on the class path. A field of type {@code javax.measure.quantity.Length}, {@code org.tinygears.uom.jsr.quantity.Length}
+ * or {@code javax.measure.Quantity<Length>} reads like the native {@code Length}, and gets a quantity of uom-jsr; a field
+ * of type {@code javax.measure.Unit<Length>} reads like the native {@code Unit<Length>}, and gets a unit of uom-jsr.
  */
 final class JsrSupport {
     private static final String STANDARD_PACKAGE = "javax.measure.quantity";
@@ -36,10 +37,15 @@ final class JsrSupport {
     static void install(Module.SetupContext context, Options options) {
         JsonSerializer<javax.measure.Quantity<?>> quantities =
                 new JsrQuantitySerializer(new QuantitySerializer(options));
+        JsonSerializer<javax.measure.Unit<?>> units = new JsrUnitSerializer(new UnitSerializer(options));
         context.addSerializers(new Serializers.Base() {
             @Override
             public JsonSerializer<?> findSerializer(SerializationConfig config, JavaType type, BeanDescription desc) {
-                return javax.measure.Quantity.class.isAssignableFrom(type.getRawClass()) ? quantities : null;
+                Class<?> raw = type.getRawClass();
+                if (javax.measure.Quantity.class.isAssignableFrom(raw)) {
+                    return quantities;
+                }
+                return javax.measure.Unit.class.isAssignableFrom(raw) ? units : null;
             }
         });
         context.addDeserializers(new Deserializers.Base() {
@@ -57,7 +63,19 @@ final class JsrSupport {
             Class<?> argument = argument(type);
             return argument == null ? natural(raw, options) : typed(raw, argument, options);
         }
+        if (raw == javax.measure.Unit.class) {
+            return unit(type, options);
+        }
         return isQuantityType(raw) ? typed(raw, raw, options) : null;
+    }
+
+    /** A unit field: the native deserializer reads it and checks its type, and the result is a unit of uom-jsr. */
+    private static JsonDeserializer<?> unit(JavaType type, Options options) {
+        Class<?> argument = argument(type);
+        Class<?> nativeType = argument != null && argument.getPackageName().equals(STANDARD_PACKAGE)
+                ? load(NATIVE_PACKAGE, argument.getSimpleName())
+                : null;
+        return new JsrUnitDeserializer(new UnitDeserializer(nativeType, options));
     }
 
     /** A field of the type of its unit: the native deserializer reads any quantity, and the result is converted. */
@@ -87,7 +105,7 @@ final class JsrSupport {
                         && javax.measure.Quantity.class.isAssignableFrom(type));
     }
 
-    /** The quantity type of {@code Quantity<Length>}; null for a wildcard or a raw type. */
+    /** The quantity type of {@code Quantity<Length>} or {@code Unit<Length>}; null for a wildcard or a raw type. */
     private static Class<?> argument(JavaType type) {
         if (type.containedTypeCount() == 0) {
             return null;

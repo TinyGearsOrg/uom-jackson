@@ -46,8 +46,9 @@ user, ask before overriding it.
 ## Pinned outputs to keep in step
 
 - [docs/JSON.md](docs/JSON.md) is the specification. A change of behaviour changes it, and the other way round.
-- `vectors/quantities.json` is read by the native and the JSR tests of both modules. `read` and `write` are exact JSON
-  text; a new behaviour of the format gets a vector, and a changed one changes it for every module and API.
+- `vectors/quantities.json` and `vectors/units.json` are read by the native and the JSR tests of both modules. `read` and
+  `write` are exact JSON text; a new behaviour of the format gets a vector, and a changed one changes it for every module
+  and API.
 - The README states the baselines (Jackson 2, Jackson 3, uom) and what is supported; they must match the properties of
   the parent `pom.xml`.
 - [CHANGELOG.md](CHANGELOG.md): a change a user can see gets a line under `## [Unreleased]`.
