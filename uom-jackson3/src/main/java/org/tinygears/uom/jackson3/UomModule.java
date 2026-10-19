@@ -10,10 +10,14 @@
 
 package org.tinygears.uom.jackson3;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.MathContext;
 import java.util.Objects;
+import java.util.Properties;
 
 import tools.jackson.core.Version;
+import tools.jackson.core.util.VersionUtil;
 import tools.jackson.databind.JacksonModule;
 import org.tinygears.uom.UnitFormat;
 
@@ -34,6 +38,7 @@ public final class UomModule extends JacksonModule {
     private static final String NATIVE_API = "org.tinygears.uom.Quantity";
     private static final String JSR_API = "org.tinygears.uom.jsr.Jsr";
 
+    private static final Version VERSION = version(UomModule.class.getResourceAsStream("version.properties"));
     private static final boolean NATIVE = present(NATIVE_API);
     private static final boolean JSR = present(JSR_API);
 
@@ -147,7 +152,7 @@ public final class UomModule extends JacksonModule {
 
     @Override
     public Version version() {
-        return Version.unknownVersion();
+        return VERSION;
     }
 
     @Override
@@ -157,6 +162,28 @@ public final class UomModule extends JacksonModule {
         }
         if (JSR) {
             JsrSupport.install(context, options);
+        }
+    }
+
+    /**
+     * The version in the properties that Maven filled in at build time; unknown if there is none, or if it was not
+     * filled in (the file as it is in the sources).
+     */
+    static Version version(InputStream resource) {
+        if (resource == null) {
+            return Version.unknownVersion();
+        }
+        try (resource) {
+            Properties properties = new Properties();
+            properties.load(resource);
+            String version = properties.getProperty("version", "");
+            if (version.isEmpty() || version.startsWith("${")) {
+                return Version.unknownVersion();
+            }
+            return VersionUtil.parseVersion(
+                    version, properties.getProperty("groupId"), properties.getProperty("artifactId"));
+        } catch (IOException e) {
+            return Version.unknownVersion();
         }
     }
 
