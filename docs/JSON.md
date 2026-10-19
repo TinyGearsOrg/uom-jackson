@@ -3,7 +3,7 @@
 How uom quantities and units appear in JSON. Both modules (`uom-jackson2` and `uom-jackson3`) and both uom APIs (native
 and JSR-385) use this one format.
 
-**Status:** `uom-jackson2` implements this format; `uom-jackson3` does not yet.
+**Status:** both modules implement this format.
 
 ## Quantities
 
@@ -23,8 +23,9 @@ or infinite is not written, because JSON has no such number: the writer fails wi
 
 **Reading.** Both forms are read. In an object, `value` is a JSON number or a string (an optional minus sign, digits, an
 optional fraction and an optional exponent; no NaN and no hexadecimal), `unit` is a string, and `scale` is `"ABSOLUTE"` or
-`"RELATIVE"`. Each property may appear once. An unknown property is an error, unless the mapper is set to ignore unknown
-properties (`FAIL_ON_UNKNOWN_PROPERTIES`).
+`"RELATIVE"`. Each property may appear once. An unknown property follows the setting of the mapper,
+`FAIL_ON_UNKNOWN_PROPERTIES`: it is an error where that is on (the default of Jackson 2) and is ignored where it is off
+(the default of Jackson 3).
 
 **Numbers.** A quantity reads as `double` by default, as `QuantityFormat` does. With a `MathContext` set on the
 module, it reads as an exact `BigDecimal` that keeps every digit. A decimal quantity is written with its exact value

@@ -13,12 +13,15 @@ quantities and units as JSON, for Jackson 2 and Jackson 3, on the native and the
 Jackson modules for [uom](https://github.com/TinyGearsOrg/uom): quantities and units as JSON, with exact decimals, typed
 fields and units that Jackson checks while it reads.
 
-**Status:** under construction, nothing is released. `uom-jackson2` reads and writes quantities and units on the native
-API, and quantities on the JSR-385 API of uom-jsr, in the format of [docs/JSON.md](docs/JSON.md). `uom-jackson3` detects
-the uom API but has no serializers yet.
+**Status:** under construction, nothing is released. Both modules read and write quantities and units on the native
+API, and quantities on the JSR-385 API of uom-jsr (not yet its units), in the format of [docs/JSON.md](docs/JSON.md).
 
 ```java
+// Jackson 2 (uom-jackson2)
 ObjectMapper mapper = new ObjectMapper().registerModule(new UomModule());
+// Jackson 3 (uom-jackson3): mappers are immutable
+ObjectMapper mapper = JsonMapper.builder().addModule(new UomModule()).build();
+
 mapper.writeValueAsString(Length.of(5, SI.KILOMETRE));              // "5.0 km"
 mapper.readValue("{\"value\": 5, \"unit\": \"km\"}", Length.class);  // a Length of 5 km
 mapper.readValue("\"5 s\"", Length.class);   // error: cannot read "5 s" as Length: Time [T] is not Length [L]
